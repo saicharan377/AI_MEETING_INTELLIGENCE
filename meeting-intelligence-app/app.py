@@ -12,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Global CSS: Matte Dark & Custom Sign-In Card ---
+# --- Integrated UI CSS ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -22,31 +22,94 @@ st.markdown("""
     }
 
     .stApp {
-        background-color: #0d0e12 !important;
+        background-color: #0b0c10 !important;
         color: #f3f4f6 !important;
     }
 
-    /* Auth Background & Center Layout */
-    .login-wrapper {
+    /* Top Hero Navbar */
+    .landing-nav {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
-        min-height: 88vh;
+        padding: 0.4rem 0 1.5rem 0;
         width: 100%;
     }
+    .landing-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #ffffff;
+    }
+    .landing-brand-dot {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #6366f1;
+        box-shadow: 0 0 16px #6366f1;
+    }
+    .landing-links {
+        display: flex;
+        gap: 2.2rem;
+        color: #94a3b8;
+        font-size: 0.92rem;
+        font-weight: 500;
+    }
 
+    /* Hero Typography */
+    .hero-badge-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+    }
+    .hero-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(99, 102, 241, 0.08);
+        border: 1px solid rgba(99, 102, 241, 0.28);
+        border-radius: 9999px;
+        padding: 0.45rem 1.2rem;
+        font-size: 0.82rem;
+        color: #c7d2fe;
+        font-weight: 600;
+    }
+    .hero-title {
+        font-size: 4.8rem;
+        font-weight: 800;
+        line-height: 1.05;
+        text-align: center;
+        letter-spacing: -0.04em;
+        color: #ffffff;
+        margin: 0 auto 1.6rem auto;
+        max-width: 950px;
+    }
+    .hero-title span.purple-glow {
+        background: linear-gradient(135deg, #6366f1 20%, #a855f7 70%, #ec4899 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+        color: #8b8ea2;
+        font-size: 1.15rem;
+        text-align: center;
+        max-width: 680px;
+        margin: 0 auto 3rem auto;
+        line-height: 1.6;
+    }
+
+    /* Screenshot 2: Modal / Centered Sign-In Card */
     .login-box {
         background: #14161d;
         border: 1px solid rgba(255, 255, 255, 0.07);
         border-radius: 28px;
-        padding: 3.2rem 2.6rem 2.8rem 2.6rem;
-        width: 100%;
-        max-width: 440px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+        padding: 3rem 2.4rem 2.4rem 2.4rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         text-align: center;
         margin: 0 auto;
     }
-
     .login-icon {
         width: 64px;
         height: 64px;
@@ -58,14 +121,12 @@ st.markdown("""
         margin: 0 auto 1.4rem auto;
         box-shadow: 0 8px 24px rgba(100, 91, 246, 0.35);
     }
-
     .login-dot {
         width: 16px;
         height: 16px;
         border-radius: 50%;
         background: #ffffff;
     }
-
     .login-title {
         font-size: 1.85rem;
         font-weight: 700;
@@ -73,20 +134,18 @@ st.markdown("""
         letter-spacing: -0.02em;
         margin: 0 0 0.4rem 0;
     }
-
     .login-subtitle {
         font-size: 0.95rem;
         color: #7b8092;
         margin-bottom: 2rem;
     }
 
-    /* Style Streamlit Inputs Inside Login Form */
+    /* Custom Form Fields */
     [data-testid="stForm"] {
         border: none !important;
         padding: 0 !important;
         background: transparent !important;
     }
-
     [data-testid="stForm"] input {
         background-color: #0b0c10 !important;
         border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -94,15 +153,13 @@ st.markdown("""
         color: #ffffff !important;
         padding: 0.9rem 1.1rem !important;
         font-size: 0.95rem !important;
-        height: auto !important;
     }
-
     [data-testid="stForm"] input:focus {
         border-color: #645bf6 !important;
         box-shadow: 0 0 0 1px #645bf6 !important;
     }
 
-    /* Primary Sign In Button */
+    /* Distinct Purple Sign In Button */
     .stButton.signin-btn > button {
         background: #5b5ff5 !important;
         color: #ffffff !important;
@@ -112,13 +169,11 @@ st.markdown("""
         padding: 0.85rem 1rem !important;
         font-size: 1rem !important;
         width: 100% !important;
-        margin-top: 0.5rem !important;
+        margin-top: 0.6rem !important;
         box-shadow: 0 8px 20px rgba(91, 95, 245, 0.25) !important;
-        transition: all 0.2s ease !important;
     }
     .stButton.signin-btn > button:hover {
         opacity: 0.92 !important;
-        transform: translateY(-1px) !important;
     }
 
     /* Google Button */
@@ -141,14 +196,14 @@ st.markdown("""
     .divider-text {
         color: #55596b;
         font-size: 0.85rem;
-        margin: 1.4rem 0 1.2rem 0;
-        position: relative;
+        margin: 1.3rem 0 1.1rem 0;
+        text-align: center;
     }
-
     .login-footer-links {
         margin-top: 1.8rem;
         font-size: 0.88rem;
         color: #7b8092;
+        text-align: center;
     }
     .login-footer-links a {
         color: #ffffff !important;
@@ -156,7 +211,7 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* --- App Workspace Styling --- */
+    /* Workspace Sidebar */
     [data-testid="stSidebar"] {
         background-color: #08090d !important;
         border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
@@ -172,7 +227,6 @@ st.markdown("""
         margin: 1.2rem 0 0.5rem 0.4rem;
         font-weight: 700;
     }
-
     .user-footer {
         display: flex;
         align-items: center;
@@ -197,7 +251,7 @@ st.markdown("""
         flex-shrink: 0;
     }
 
-    /* Metrics Grid */
+    /* Dashboard Metrics & Surfaces */
     .metrics-row {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -231,7 +285,6 @@ st.markdown("""
     .metric-bot.positive { color: #10b981; }
     .metric-bot.negative { color: #ef4444; }
 
-    /* Clean Card Surfaces */
     .surface-card {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -242,10 +295,10 @@ st.markdown("""
     .surface-title { font-size: 1.1rem; font-weight: 600; color: #ffffff; margin: 0; }
     .surface-subtitle { font-size: 0.82rem; color: #636779; margin-top: 0.25rem; }
 
-    /* File Uploader Clean Card Style */
+    /* Clean Uploader Box */
     [data-testid="stFileUploader"] {
         width: 100% !important;
-        margin-top: 0.5rem !important;
+        margin-top: 0.4rem !important;
     }
     [data-testid="stFileUploader"] section {
         background-color: #111218 !important;
@@ -264,8 +317,6 @@ st.markdown("""
         border-radius: 8px !important;
         padding: 0.45rem 1rem !important;
         font-size: 0.82rem !important;
-        box-shadow: none !important;
-        transform: none !important;
     }
 
     /* Live Transcript Display Box */
@@ -329,9 +380,11 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- App State Management ---
+# --- App State Init ---
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
+if "show_login_form" not in st.session_state:
+    st.session_state.show_login_form = False
 if "user_email" not in st.session_state:
     st.session_state.user_email = ""
 if "transcript" not in st.session_state:
@@ -354,62 +407,7 @@ if "default_action_items" not in st.session_state:
     ]
 
 # =============================================================
-# SCREEN: AUTHENTICATION (EXACT FIGMA / SCREENSHOT REPLICA)
-# =============================================================
-if not st.session_state.authenticated:
-    _, center_col, _ = st.columns([1, 1.3, 1])
-    with center_col:
-        st.markdown("<div style='height: 40px;'></div>", unsafe_allow_html=True)
-        
-        # Header Icon & Text
-        st.markdown("""
-            <div style="background: #14161d; border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 28px; padding: 2.8rem 2.2rem 2.2rem 2.2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); text-align: center;">
-                <div class="login-icon">
-                    <div class="login-dot"></div>
-                </div>
-                <h1 class="login-title">Synpact AI</h1>
-                <div class="login-subtitle">Sign in to your workspace</div>
-        """, unsafe_allow_html=True)
-
-        with st.form("auth_form", clear_on_submit=False):
-            email_in = st.text_input("Email", placeholder="Email address", label_visibility="collapsed")
-            pass_in = st.text_input("Password", placeholder="Password", type="password", label_visibility="collapsed")
-            
-            st.markdown('<div class="stButton signin-btn">', unsafe_allow_html=True)
-            submitted = st.form_submit_button("Sign In", use_container_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
-
-            if submitted:
-                # Accepts any valid input or default credentials
-                if email_in and pass_in:
-                    st.session_state.authenticated = True
-                    st.session_state.user_email = email_in
-                    st.rerun()
-                else:
-                    st.error("Please enter both email and password.")
-
-        st.markdown('<div class="divider-text">or</div>', unsafe_allow_html=True)
-
-        # Google Sign-in Alternative
-        st.markdown('<div class="stButton google-btn">', unsafe_allow_html=True)
-        if st.button("Continue with Google", use_container_width=True):
-            st.session_state.authenticated = True
-            st.session_state.user_email = "charanvaygeti@gmail.com"
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        st.markdown("""
-                <div class="login-footer-links">
-                    <div style="margin-bottom: 12px;"><a href="#" style="color:#7b8092 !important; font-weight: 500 !important;">Forgot password?</a></div>
-                    <div>Don't have an account? <a href="#" style="color:#ffffff !important; font-weight: 600 !important;">Sign up</a></div>
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
-
-    st.stop()
-
-# =============================================================
-# MODAL DIALOG: AUDIO INGESTION & SPEECH-TO-TEXT
+# MODAL DIALOG: AUDIO INGESTION
 # =============================================================
 @st.dialog("Record or Ingest Meeting Audio", width="large")
 def new_meeting_dialog():
@@ -432,7 +430,7 @@ def new_meeting_dialog():
         
         if st.button("🚀 Transcribe & Generate Insights", type="primary", use_container_width=True):
             with st.status("Running Synpact Intelligence Pipeline...", expanded=True) as status:
-                st.write("🎙️ Converting audio speech to text (Faster-Whisper)...")
+                st.write("🎙️ Converting speech to text (Faster-Whisper)...")
                 t = transcribe_audio_file(uploaded)
                 st.session_state.transcript = t
                 
@@ -465,7 +463,132 @@ def new_meeting_dialog():
                     st.error(f"Intelligence synthesis error: {err}")
 
 # =============================================================
-# SIDEBAR
+# ROUTING: LANDING PAGE VS. LOGIN CARD VS. DASHBOARD
+# =============================================================
+if not st.session_state.authenticated:
+    
+    # -------------------------------------------------------------
+    # VIEW A: SCREENSHOT 1 — THE HERO LANDING PAGE
+    # -------------------------------------------------------------
+    if not st.session_state.show_login_form:
+        # Top Navbar
+        c_brand, c_navlinks, c_login, c_cta = st.columns([2.5, 3.5, 0.9, 1.2])
+        with c_brand:
+            st.markdown("""
+                <div class="landing-brand" style="margin-top: 5px;">
+                    <div class="landing-brand-dot"></div>
+                    <span>Synpact<sup style='font-size: 0.6rem; color:#818cf8; margin-left: 2px;'>AI</sup></span>
+                </div>
+            """, unsafe_allow_html=True)
+        with c_navlinks:
+            st.markdown("""
+                <div class="landing-links" style="margin-top: 10px; justify-content: center;">
+                    <span>Features</span>
+                    <span>Workflow</span>
+                    <span>Pricing</span>
+                </div>
+            """, unsafe_allow_html=True)
+        with c_login:
+            if st.button("Log in", use_container_width=True, key="top_login"):
+                st.session_state.show_login_form = True
+                st.rerun()
+        with c_cta:
+            if st.button("Start free", type="primary", use_container_width=True, key="top_start"):
+                st.session_state.show_login_form = True
+                st.rerun()
+
+        st.markdown("<div style='height: 35px;'></div>", unsafe_allow_html=True)
+
+        # Hero Badge & Headings
+        st.markdown("""
+            <div class="hero-badge-container">
+                <div class="hero-pill">
+                    <span>🪄</span> AI Meeting Intelligence
+                </div>
+            </div>
+            <div class="hero-title">
+                Turn every<br>conversation into<br><span class="purple-glow">momentum.</span>
+            </div>
+            <div class="hero-subtitle">
+                Synpact AI transforms meetings into searchable knowledge, clear decisions,
+                and accountable action. Stop losing ideas in the transcript.
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Centered Action Buttons
+        _, cta_left, cta_right, _ = st.columns([2.2, 1.4, 1.4, 2.2])
+        with cta_left:
+            if st.button("Start free →", type="primary", use_container_width=True, key="hero_start_btn"):
+                st.session_state.show_login_form = True
+                st.rerun()
+        with cta_right:
+            if st.button("▷ See how it works", use_container_width=True, key="hero_demo_btn"):
+                st.session_state.show_login_form = True
+                st.rerun()
+
+        st.stop()
+
+    # -------------------------------------------------------------
+    # VIEW B: SCREENSHOT 2 — THE LOGIN CARD
+    # -------------------------------------------------------------
+    else:
+        # Back navigation
+        if st.button("← Back to Home"):
+            st.session_state.show_login_form = False
+            st.rerun()
+
+        _, center_col, _ = st.columns([1, 1.25, 1])
+        with center_col:
+            st.markdown("<div style='height: 25px;'></div>", unsafe_allow_html=True)
+            
+            st.markdown("""
+                <div class="login-box">
+                    <div class="login-icon">
+                        <div class="login-dot"></div>
+                    </div>
+                    <h1 class="login-title">Synpact AI</h1>
+                    <div class="login-subtitle">Sign in to your workspace</div>
+            """, unsafe_allow_html=True)
+
+            with st.form("auth_form"):
+                email_in = st.text_input("Email", placeholder="Email address", label_visibility="collapsed")
+                pass_in = st.text_input("Password", placeholder="Password", type="password", label_visibility="collapsed")
+                
+                st.markdown('<div class="stButton signin-btn">', unsafe_allow_html=True)
+                submitted = st.form_submit_button("Sign In", use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+
+                if submitted:
+                    if email_in and pass_in:
+                        st.session_state.authenticated = True
+                        st.session_state.user_email = email_in
+                        st.session_state.show_login_form = False
+                        st.rerun()
+                    else:
+                        st.error("Please enter both email and password.")
+
+            st.markdown('<div class="divider-text">or</div>', unsafe_allow_html=True)
+
+            st.markdown('<div class="stButton google-btn">', unsafe_allow_html=True)
+            if st.button("Continue with Google", use_container_width=True):
+                st.session_state.authenticated = True
+                st.session_state.user_email = "charanvaygeti@gmail.com"
+                st.session_state.show_login_form = False
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown("""
+                    <div class="login-footer-links">
+                        <div style="margin-bottom: 12px;"><a href="#" style="color:#7b8092 !important; font-weight: 500 !important;">Forgot password?</a></div>
+                        <div>Don't have an account? <a href="#" style="color:#ffffff !important; font-weight: 600 !important;">Sign up</a></div>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+
+        st.stop()
+
+# =============================================================
+# WORKSPACE: MAIN DASHBOARD & SCREEN NAVIGATION
 # =============================================================
 with st.sidebar:
     st.markdown("""
@@ -488,6 +611,7 @@ with st.sidebar:
     
     if st.button("🚪 Sign Out", use_container_width=True):
         st.session_state.authenticated = False
+        st.session_state.show_login_form = False
         st.session_state.report = None
         st.session_state.transcript = None
         st.rerun()
@@ -523,7 +647,6 @@ if current_nav == "Dashboard":
 
     st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
 
-    # 4 Metric Cards
     st.markdown(f"""
         <div class="metrics-row">
             <div class="metric-card">
@@ -549,7 +672,6 @@ if current_nav == "Dashboard":
         </div>
     """, unsafe_allow_html=True)
 
-    # --- Live Speech-to-Text Viewer & Download Panel ---
     if st.session_state.transcript:
         st.markdown("""
             <div class="surface-card" style="margin-bottom: 1.5rem; min-height: auto;">
@@ -588,7 +710,6 @@ if current_nav == "Dashboard":
                 )
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # 2 Main Columns
     col_left, col_right = st.columns(2, gap="medium")
     with col_left:
         st.markdown("""
@@ -828,17 +949,6 @@ elif current_nav == "Ask Synpact":
             <h1 style='font-size: 1.85rem; font-weight: 700; margin: 0; color: #ffffff;'>Ask Synpact</h1>
         </div>
         <p style='color: #717684; font-size: 0.95rem;'>Your AI meeting intelligence assistant.</p>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-        <div class="chat-bubble-assistant">
-            <div style="display: flex; gap: 12px; align-items: flex-start;">
-                <span style="background:#5b50e6; padding: 4px 6px; border-radius: 6px; font-size: 0.75rem;">🤖</span>
-                <div>
-                    Hello! I'm Synpact AI. I can answer questions about any of your past meetings, summarize topics, or find specific decisions. What would you like to know?
-                </div>
-            </div>
-        </div>
     """, unsafe_allow_html=True)
 
     for msg in st.session_state.messages:
