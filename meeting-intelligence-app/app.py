@@ -12,22 +12,20 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Precise Custom CSS (Synpact Dark UI) ---
+# --- Synpact Dark UI Styling ---
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+    @import url('[https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap)');
 
     * {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
 
-    /* Overall Matte Background */
     .stApp {
         background-color: #0b0c10 !important;
         color: #f3f4f6 !important;
     }
 
-    /* Sidebar Clean Styling */
     [data-testid="stSidebar"] {
         background-color: #08090d !important;
         border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
@@ -35,7 +33,6 @@ st.markdown("""
     }
     [data-testid="stSidebarNav"] { display: none; }
 
-    /* Custom Synpact Primary Purple Button */
     .stButton>button {
         background: #5b50e6 !important;
         color: #ffffff !important;
@@ -49,7 +46,6 @@ st.markdown("""
         opacity: 0.92;
     }
 
-    /* Navigation Headers */
     .nav-label {
         font-size: 0.68rem;
         text-transform: uppercase;
@@ -59,7 +55,6 @@ st.markdown("""
         font-weight: 700;
     }
 
-    /* User Profile Box */
     .user-footer {
         display: flex;
         align-items: center;
@@ -83,7 +78,6 @@ st.markdown("""
         font-weight: 700;
     }
 
-    /* KPI Metric Cards */
     .metrics-row {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -120,7 +114,6 @@ st.markdown("""
     .metric-bot.positive { color: #10b981; }
     .metric-bot.negative { color: #ef4444; }
 
-    /* Surface Cards */
     .surface-card {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -140,7 +133,6 @@ st.markdown("""
         margin-top: 0.25rem;
     }
 
-    /* Meeting Feed Card */
     .meeting-card-row {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -162,7 +154,6 @@ st.markdown("""
     .score-number { font-size: 1.35rem; font-weight: 700; color: #ffffff; line-height: 1; }
     .score-caption { font-size: 0.62rem; color: #636779; text-transform: uppercase; margin-top: 2px; }
 
-    /* Action Items Table Header & Rows */
     .table-header {
         display: grid;
         grid-template-columns: 2.2fr 1.6fr 1fr 1fr 1fr 1fr;
@@ -184,7 +175,6 @@ st.markdown("""
         border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     }
 
-    /* Ask Synpact Chat Bubble */
     .chat-bubble-assistant {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -205,7 +195,6 @@ st.markdown("""
         display: inline-block;
         margin-right: 8px;
         margin-top: 8px;
-        cursor: pointer;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -244,7 +233,7 @@ if not st.session_state.authenticated:
                     st.error("Invalid username or password")
     st.stop()
 
-# --- Application State ---
+# --- Session State ---
 if "transcript" not in st.session_state:
     st.session_state.transcript = None
 if "report" not in st.session_state:
@@ -264,14 +253,14 @@ if "default_action_items" not in st.session_state:
         {"task": "Work hard for 9 months and assess body condition for IPL 2026", "meeting": "Untitled Meeting", "owner": "Unassigned", "priority": "Medium", "status": "Open", "due": "No Due Date"}
     ]
 
-# --- Modal: Ingest New Meeting ---
+# --- Modal: Ingest New Audio ---
 @st.dialog("Record or Ingest Meeting Audio")
 def new_meeting_dialog():
     uploaded = st.file_uploader("Upload audio file", type=["mp3", "wav", "m4a"])
     if uploaded:
         st.audio(uploaded)
         if st.button("Run Intelligence Engine", type="primary", use_container_width=True):
-            with st.spinner("Transcribing and synthesizing with Gemini 3.6 Flash..."):
+            with st.spinner("Transcribing and synthesizing with Gemini..."):
                 t = transcribe_audio_file(uploaded)
                 r = analyze_transcript(t)
                 st.session_state.transcript = t
@@ -297,17 +286,6 @@ def new_meeting_dialog():
                     })
                 st.session_state.messages = []
                 st.rerun()
-
-# --- Modal: Search Overlay (Screen 5) ---
-@st.dialog("Search Workspace")
-def search_dialog():
-    query = st.text_input("🔍 Search", placeholder="Search meetings, transcripts, decisions...", label_visibility="collapsed")
-    st.caption("Search powered by semantic matching • Press ESC to close")
-    if query:
-        st.write(f"Results for: **{query}**")
-        matches = [m for m in st.session_state.meetings_history if query.lower() in m["title"].lower()]
-        for m in matches:
-            st.markdown(f"- **{m['title']}** ({m['date']})")
 
 # --- Sidebar ---
 with st.sidebar:
@@ -361,7 +339,6 @@ if current_nav == "Dashboard":
 
     st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
 
-    # 4 Metric Cards
     st.markdown(f"""
         <div class="metrics-row">
             <div class="metric-card">
@@ -387,7 +364,6 @@ if current_nav == "Dashboard":
         </div>
     """, unsafe_allow_html=True)
 
-    # 2 Surface Columns
     col_left, col_right = st.columns(2, gap="medium")
     with col_left:
         st.markdown("""
@@ -544,17 +520,13 @@ elif current_nav == "Analytics":
         </div>
     """, unsafe_allow_html=True)
 
-    # Charts Row
     chart_col1, chart_col2 = st.columns(2, gap="medium")
-    
-    # Meeting Volume Chart
     with chart_col1:
         st.markdown("""
             <div class="surface-card">
                 <h3 class="surface-title">Meeting Volume</h3>
                 <div class="surface-subtitle" style="margin-bottom: 0.5rem;">Number of meetings held over time</div>
         """, unsafe_allow_html=True)
-        
         fig1 = go.Figure()
         fig1.add_trace(go.Bar(
             x=["Sep 1", "Sep 3", "Sep 5", "Sep 6"],
@@ -572,14 +544,12 @@ elif current_nav == "Analytics":
         st.plotly_chart(fig1, use_container_width=True, config={"displayModeBar": False})
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # Meeting Intelligence Chart
     with chart_col2:
         st.markdown("""
             <div class="surface-card">
                 <h3 class="surface-title">Meeting Intelligence</h3>
                 <div class="surface-subtitle" style="margin-bottom: 0.5rem;">Average intelligence score trend</div>
         """, unsafe_allow_html=True)
-
         fig2 = go.Figure()
         fig2.add_trace(go.Scatter(
             x=["Sep 1", "Sep 3", "Sep 5", "Sep 6"],
@@ -635,7 +605,6 @@ elif current_nav == "Ask Synpact":
         <p style='color: #717684; font-size: 0.95rem;'>Your AI meeting intelligence assistant.</p>
     """, unsafe_allow_html=True)
 
-    # Initial Bot Introduction Bubble (matching Screen 6)
     st.markdown("""
         <div class="chat-bubble-assistant">
             <div style="display: flex; gap: 12px; align-items: flex-start;">
@@ -647,12 +616,10 @@ elif current_nav == "Ask Synpact":
         </div>
     """, unsafe_allow_html=True)
 
-    # Chat history
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    # Chat Input
     if user_q := st.chat_input("Ask about your meetings..."):
         st.session_state.messages.append({"role": "user", "content": user_q})
         with st.chat_message("user"):
@@ -671,7 +638,6 @@ elif current_nav == "Ask Synpact":
             st.markdown(reply)
             st.session_state.messages.append({"role": "assistant", "content": reply})
 
-    # Suggestion Chips
     st.markdown("""
         <div style="margin-top: 1.5rem;">
             <span class="chat-prompt-pill">Summarize my recent meetings</span>

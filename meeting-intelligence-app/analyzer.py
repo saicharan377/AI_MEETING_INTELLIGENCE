@@ -11,6 +11,7 @@ from google.genai import types
 
 load_dotenv()
 
+# Check Streamlit Cloud secrets first, fallback to local .env
 api_key = st.secrets.get("GOOGLE_API_KEY", os.getenv("GOOGLE_API_KEY"))
 
 if not api_key:
@@ -29,7 +30,8 @@ class MeetingReport(BaseModel):
     key_decisions: List[str] = Field(description="Decisions agreed upon in the meeting")
     action_items: List[ActionItem] = Field(description="List of extracted actionable items")
 
-MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]
+# Modern supported flash models
+MODELS = ["gemini-2.5-flash", "gemini-2.0-flash"]
 
 def analyze_transcript(transcript_text: str) -> MeetingReport:
     """Extracts summary and action items using standard prompt-driven JSON extraction."""
@@ -50,7 +52,10 @@ def analyze_transcript(transcript_text: str) -> MeetingReport:
             response = client.models.generate_content(
                 model=model_name,
                 contents=[
-                    types.Content(role="user", parts=[types.Part.from_text(text=f"{system_prompt}\n\nTranscript:\n{transcript_text}")])
+                    types.Content(
+                        role="user", 
+                        parts=[types.Part.from_text(text=f"{system_prompt}\n\nTranscript:\n{transcript_text}")]
+                    )
                 ],
                 config=types.GenerateContentConfig(
                     temperature=0.1,
@@ -58,7 +63,6 @@ def analyze_transcript(transcript_text: str) -> MeetingReport:
                 )
             )
             raw_text = response.text.strip()
-            # Clean possible markdown wrap
             raw_text = re.sub(r"^```json\s*", "", raw_text)
             raw_text = re.sub(r"\s*```$", "", raw_text)
             
@@ -69,15 +73,14 @@ def analyze_transcript(transcript_text: str) -> MeetingReport:
             time.sleep(1)
             continue
 
-    # Display clear non-redacted error on Streamlit frontend
     st.error(f"Gemini API Error Detail: {last_err}")
     raise RuntimeError(f"Gemini API Error: {last_err}")
 
 def ask_meeting_chat(transcript_text: str, chat_history: list, user_question: str) -> str:
-    """Answers user queries grounded in transcript."""
+    """Answers user queries grounded directly in the meeting transcript."""
     system_instruction = (
-        "You are an assistant answering questions about a meeting. "
-        "Use ONLY the provided transcript. If not mentioned, state that clearly.\n\n"
+        "You are an assistant answering questions about a specific meeting. "
+        "Use ONLY the provided transcript. If the information is not mentioned, state that clearly.\n\n"
         f"Transcript:\n{transcript_text}"
     )
 
