@@ -30,8 +30,8 @@ class MeetingReport(BaseModel):
     key_decisions: List[str] = Field(description="Decisions agreed upon in the meeting")
     action_items: List[ActionItem] = Field(description="List of extracted actionable items")
 
-# Use currently supported Gemini 3.6 endpoints
-MODELS = ["gemini-3.6-flash", "models/gemini-3.6-flash", "gemini-3.6-pro"]
+# Supported Gemini endpoints
+MODELS = ["gemini-2.5-flash", "gemini-2.5-pro"]
 
 def analyze_transcript(transcript_text: str) -> MeetingReport:
     """Extracts summary and action items using standard prompt-driven JSON extraction."""
@@ -77,10 +77,10 @@ def analyze_transcript(transcript_text: str) -> MeetingReport:
     raise RuntimeError(f"Gemini API Error: {last_err}")
 
 def ask_meeting_chat(transcript_text: str, chat_history: list, user_question: str) -> str:
-    """Answers user queries grounded in the meeting transcript."""
+    """Answers user queries grounded directly in the meeting transcript."""
     system_instruction = (
-        "You are an assistant answering questions about a meeting. "
-        "Use ONLY the provided transcript. If not mentioned, state that clearly.\n\n"
+        "You are an assistant answering questions about a specific meeting. "
+        "Use ONLY the provided transcript. If the information is not mentioned, state that clearly.\n\n"
         f"Transcript:\n{transcript_text}"
     )
 
@@ -106,4 +106,4 @@ def ask_meeting_chat(transcript_text: str, chat_history: list, user_question: st
         except Exception:
             continue
 
-    return "Unable to process your request at this moment. Please try again."
+    return "Unable to process request right now. Please try again."

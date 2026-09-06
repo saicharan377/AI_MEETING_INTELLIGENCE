@@ -1,3 +1,6 @@
+import os
+import urllib.parse
+import requests
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -12,18 +15,40 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Integrated UI CSS ---
+# --- Integrated UI CSS with Scoped Icon and Status Rules ---
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    @import url('[https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap](https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap)');
 
-    * {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    html, body, [class*="css"] {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     .stApp {
         background-color: #0b0c10 !important;
         color: #f3f4f6 !important;
+    }
+
+    /* Prevent icon fonts (Material Symbols) from breaking into raw text */
+    [class*="material-symbols"],
+    [data-testid*="stIcon"],
+    [data-testid="stStatusWidget"] i,
+    [data-testid="stStatusWidget"] svg,
+    [data-testid="stStatusWidget"] [data-testid="stExpanderToggleIcon"] {
+        font-family: inherit !important;
+        line-height: 1 !important;
+    }
+
+    /* Status widget layout fix */
+    [data-testid="stStatusWidget"] {
+        background-color: #14161d !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 12px !important;
+    }
+    [data-testid="stStatusWidget"] summary {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
     }
 
     /* Top Hero Navbar */
@@ -100,7 +125,7 @@ st.markdown("""
         line-height: 1.6;
     }
 
-    /* Screenshot 2: Modal / Centered Sign-In Card */
+    /* Centered Sign-In Box */
     .login-box {
         background: #14161d;
         border: 1px solid rgba(255, 255, 255, 0.07);
@@ -140,7 +165,7 @@ st.markdown("""
         margin-bottom: 2rem;
     }
 
-    /* Custom Form Fields */
+    /* Form Fields */
     [data-testid="stForm"] {
         border: none !important;
         padding: 0 !important;
@@ -159,7 +184,7 @@ st.markdown("""
         box-shadow: 0 0 0 1px #645bf6 !important;
     }
 
-    /* Distinct Purple Sign In Button */
+    /* Primary Sign In Button */
     .stButton.signin-btn > button {
         background: #5b5ff5 !important;
         color: #ffffff !important;
@@ -174,23 +199,6 @@ st.markdown("""
     }
     .stButton.signin-btn > button:hover {
         opacity: 0.92 !important;
-    }
-
-    /* Google Button */
-    .stButton.google-btn > button {
-        background: #0f1015 !important;
-        color: #ffffff !important;
-        border-radius: 14px !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        font-weight: 500 !important;
-        padding: 0.75rem 1rem !important;
-        font-size: 0.92rem !important;
-        width: 100% !important;
-        box-shadow: none !important;
-    }
-    .stButton.google-btn > button:hover {
-        background: #181a24 !important;
-        border-color: rgba(255, 255, 255, 0.16) !important;
     }
 
     .divider-text {
@@ -251,7 +259,7 @@ st.markdown("""
         flex-shrink: 0;
     }
 
-    /* Dashboard Metrics & Surfaces */
+    /* Metrics & Dashboard Surfaces */
     .metrics-row {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -380,6 +388,59 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# --- Google OAuth Helper Configuration ---
+GOOGLE_CLIENT_ID = st.secrets.get("GOOGLE_CLIENT_ID", os.getenv("GOOGLE_CLIENT_ID", ""))
+GOOGLE_CLIENT_SECRET = st.secrets.get("GOOGLE_CLIENT_SECRET", os.getenv("GOOGLE_CLIENT_SECRET", ""))
+REDIRECT_URI = st.secrets.get("REDIRECT_URI", "http://localhost:8501")
+
+def get_google_auth_url():
+    """Generates the Google OAuth consent URL."""
+    base_url = "[https://accounts.google.com/o/oauth2/v2/auth](https://accounts.google.com/o/oauth2/v2/auth)"
+    params = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "redirect_uri": REDIRECT_URI,
+        "response_type": "code",
+        "scope": "openid email profile",
+        "access_type": "offline",
+        "prompt": "select_account"
+    }
+    return f"{base_url}?{urllib.parse.urlencode(params)}"
+
+def exchange_code_for_user_info(auth_code):
+    """Exchanges authorization code for Google user profile."""
+    token_endpoint = "[https://oauth2.googleapis.com/token](https://oauth2.googleapis.com/token)"
+    data = {
+        "code": auth_code,
+        "client_id": GOOGLE_CLIENT_ID,
+        "client_secret": GOOGLE_CLIENT_SECRET,
+        "redirect_uri": REDIRECT_URI,
+        "grant_type": "authorization_code"
+    }
+    try:
+        r = requests.post(token_endpoint, data=data)
+        tokens = r.json()
+        access_token = tokens.get("access_token")
+        if not access_token:
+            return None
+        user_info_endpoint = "[https://www.googleapis.com/oauth2/v3/userinfo](https://www.googleapis.com/oauth2/v3/userinfo)"
+        resp = requests.get(user_info_endpoint, headers={"Authorization": f"Bearer {access_token}"})
+        return resp.json()
+    except Exception:
+        return None
+
+# Check OAuth Redirect Query Callback
+query_params = st.query_params
+if "code" in query_params and not st.session_state.get("authenticated", False):
+    auth_code = query_params["code"]
+    user_info = exchange_code_for_user_info(auth_code)
+    if user_info and "email" in user_info:
+        st.session_state.authenticated = True
+        st.session_state.user_email = user_info["email"]
+        st.session_state.user_name = user_info.get("name", user_info["email"].split("@")[0])
+        st.session_state.user_picture = user_info.get("picture", None)
+        st.query_params.clear()
+        st.rerun()
+
 # --- App State Init ---
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
@@ -387,6 +448,10 @@ if "show_login_form" not in st.session_state:
     st.session_state.show_login_form = False
 if "user_email" not in st.session_state:
     st.session_state.user_email = ""
+if "user_name" not in st.session_state:
+    st.session_state.user_name = ""
+if "user_picture" not in st.session_state:
+    st.session_state.user_picture = None
 if "transcript" not in st.session_state:
     st.session_state.transcript = None
 if "report" not in st.session_state:
@@ -434,7 +499,7 @@ def new_meeting_dialog():
                 t = transcribe_audio_file(uploaded)
                 st.session_state.transcript = t
                 
-                st.write("🧠 Synthesizing action items & decisions (Gemini 3.6 Flash)...")
+                st.write("🧠 Synthesizing action items & decisions (Gemini Flash)...")
                 try:
                     r = analyze_transcript(t)
                     st.session_state.report = r
@@ -468,10 +533,9 @@ def new_meeting_dialog():
 if not st.session_state.authenticated:
     
     # -------------------------------------------------------------
-    # VIEW A: SCREENSHOT 1 — THE HERO LANDING PAGE
+    # VIEW A: THE HERO LANDING PAGE
     # -------------------------------------------------------------
     if not st.session_state.show_login_form:
-        # Top Navbar
         c_brand, c_navlinks, c_login, c_cta = st.columns([2.5, 3.5, 0.9, 1.2])
         with c_brand:
             st.markdown("""
@@ -499,7 +563,6 @@ if not st.session_state.authenticated:
 
         st.markdown("<div style='height: 35px;'></div>", unsafe_allow_html=True)
 
-        # Hero Badge & Headings
         st.markdown("""
             <div class="hero-badge-container">
                 <div class="hero-pill">
@@ -515,7 +578,6 @@ if not st.session_state.authenticated:
             </div>
         """, unsafe_allow_html=True)
 
-        # Centered Action Buttons
         _, cta_left, cta_right, _ = st.columns([2.2, 1.4, 1.4, 2.2])
         with cta_left:
             if st.button("Start free →", type="primary", use_container_width=True, key="hero_start_btn"):
@@ -529,10 +591,9 @@ if not st.session_state.authenticated:
         st.stop()
 
     # -------------------------------------------------------------
-    # VIEW B: SCREENSHOT 2 — THE LOGIN CARD
+    # VIEW B: THE LOGIN CARD
     # -------------------------------------------------------------
     else:
-        # Back navigation
         if st.button("← Back to Home"):
             st.session_state.show_login_form = False
             st.rerun()
@@ -562,6 +623,7 @@ if not st.session_state.authenticated:
                     if email_in and pass_in:
                         st.session_state.authenticated = True
                         st.session_state.user_email = email_in
+                        st.session_state.user_name = email_in.split("@")[0].capitalize()
                         st.session_state.show_login_form = False
                         st.rerun()
                     else:
@@ -569,13 +631,16 @@ if not st.session_state.authenticated:
 
             st.markdown('<div class="divider-text">or</div>', unsafe_allow_html=True)
 
-            st.markdown('<div class="stButton google-btn">', unsafe_allow_html=True)
-            if st.button("Continue with Google", use_container_width=True):
-                st.session_state.authenticated = True
-                st.session_state.user_email = "charanvaygeti@gmail.com"
-                st.session_state.show_login_form = False
-                st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
+            # Live Google OAuth Link
+            google_login_url = get_google_auth_url()
+            st.markdown(f"""
+                <a href="{google_login_url}" target="_self" style="text-decoration: none;">
+                    <div style="background: #0f1015; color: #ffffff; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.08); font-weight: 500; padding: 0.75rem 1rem; font-size: 0.92rem; width: 100%; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;">
+                        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+                        Continue with Google
+                    </div>
+                </a>
+            """, unsafe_allow_html=True)
 
             st.markdown("""
                     <div class="login-footer-links">
@@ -617,14 +682,20 @@ with st.sidebar:
         st.rerun()
 
     disp_email = st.session_state.user_email if st.session_state.user_email else "charanvaygeti@gmail.com"
-    initials = "CV" if "charan" in disp_email.lower() else disp_email[:2].upper()
-    display_name = "Charan Vaygeti" if "charan" in disp_email.lower() else disp_email.split("@")[0].capitalize()
+    disp_name = st.session_state.user_name if st.session_state.user_name else "Charan Vaygeti"
+    initials = disp_name[:2].upper()
+
+    avatar_html = (
+        f'<img src="{st.session_state.user_picture}" style="width:36px; height:36px; border-radius:50%;">'
+        if st.session_state.user_picture
+        else f'<div class="user-avatar">{initials}</div>'
+    )
 
     st.markdown(f"""
         <div class="user-footer">
-            <div class="user-avatar">{initials}</div>
+            {avatar_html}
             <div style="overflow: hidden;">
-                <div style="font-size: 0.85rem; font-weight: 600; color: #ffffff;">{display_name}</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: #ffffff;">{disp_name}</div>
                 <div style="font-size: 0.72rem; color: #636779; text-overflow: ellipsis; overflow: hidden;">{disp_email}</div>
             </div>
         </div>
@@ -637,7 +708,7 @@ if current_nav == "Dashboard":
     col_head, col_btn = st.columns([3.5, 1])
     with col_head:
         st.markdown(f"""
-            <h1 style='font-size: 1.85rem; font-weight: 700; margin: 0; color: #ffffff;'>Good evening, {display_name.split()[0]}.</h1>
+            <h1 style='font-size: 1.85rem; font-weight: 700; margin: 0; color: #ffffff;'>Good evening, {disp_name.split()[0]}.</h1>
             <p style='color: #717684; font-size: 0.95rem; margin-top: 0.25rem;'>Here's what happened across your meetings.</p>
         """, unsafe_allow_html=True)
     with col_btn:
