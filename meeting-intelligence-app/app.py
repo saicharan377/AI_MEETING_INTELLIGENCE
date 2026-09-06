@@ -12,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Clean Dark Matte CSS & Polished Alignment ---
+# --- Clean Dark Matte CSS & Isolated Component Styling ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
@@ -34,8 +34,8 @@ st.markdown("""
     }
     [data-testid="stSidebarNav"] { display: none; }
 
-    /* Button Consistency */
-    .stButton>button {
+    /* Default Action Buttons (excludes uploader internal buttons) */
+    .stMainBlockContainer .stButton>button {
         background: #5b50e6 !important;
         color: #ffffff !important;
         border-radius: 10px !important;
@@ -46,11 +46,12 @@ st.markdown("""
         box-shadow: 0 4px 14px rgba(91, 80, 230, 0.25);
         transition: all 0.2s ease;
     }
-    .stButton>button:hover {
+    .stMainBlockContainer .stButton>button:hover {
         opacity: 0.92;
         transform: translateY(-1px);
     }
 
+    /* Navigation Label */
     .nav-label {
         font-size: 0.7rem;
         text-transform: uppercase;
@@ -142,7 +143,41 @@ st.markdown("""
         margin-top: 0.25rem;
     }
 
-    /* Transcript Review Box */
+    /* Fixed File Uploader Box & Alignment */
+    [data-testid="stFileUploader"] {
+        width: 100% !important;
+        margin-top: 0.4rem !important;
+    }
+    [data-testid="stFileUploader"] section {
+        background-color: #111218 !important;
+        border: 1px dashed rgba(255, 255, 255, 0.16) !important;
+        border-radius: 12px !important;
+        padding: 1.6rem 1.2rem !important;
+        text-align: center !important;
+    }
+    [data-testid="stFileUploader"] section:hover {
+        border-color: #5b50e6 !important;
+    }
+    [data-testid="stFileUploader"] button {
+        background: #1e1f2b !important;
+        color: #f3f4f6 !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 8px !important;
+        padding: 0.45rem 1rem !important;
+        font-size: 0.82rem !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+    [data-testid="stFileUploader"] button:hover {
+        background: #272838 !important;
+        border-color: rgba(255, 255, 255, 0.25) !important;
+    }
+    [data-testid="stFileUploaderDropzoneInstructions"] {
+        color: #8b8ea2 !important;
+        font-size: 0.84rem !important;
+    }
+
+    /* Interactive Transcript Preview Card */
     .transcript-container {
         background: #0d0e14;
         border: 1px solid rgba(255, 255, 255, 0.06);
@@ -150,15 +185,15 @@ st.markdown("""
         padding: 1.2rem;
         font-family: monospace !important;
         font-size: 0.85rem;
-        color: #94a3b8;
+        color: #cbd5e1;
         max-height: 280px;
         overflow-y: auto;
         white-space: pre-wrap;
         line-height: 1.6;
-        margin-bottom: 1rem;
+        margin-bottom: 1.2rem;
     }
 
-    /* Meeting Feed Item */
+    /* Meeting Card Feed Item */
     .meeting-card-row {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -180,7 +215,7 @@ st.markdown("""
     .score-number { font-size: 1.35rem; font-weight: 700; color: #ffffff; line-height: 1; }
     .score-caption { font-size: 0.62rem; color: #636779; text-transform: uppercase; margin-top: 2px; }
 
-    /* Action Table */
+    /* Action Table Rows */
     .table-header {
         display: grid;
         grid-template-columns: 2.2fr 1.6fr 1fr 1fr 1fr 1fr;
@@ -202,7 +237,7 @@ st.markdown("""
         border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     }
 
-    /* Chat Assistant Card */
+    /* Chat Assistant Bubble */
     .chat-bubble-assistant {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -281,16 +316,25 @@ if "default_action_items" not in st.session_state:
         {"task": "Work hard for 9 months and assess body condition for IPL 2026", "meeting": "Product Roadmap Sync", "owner": "Team", "priority": "High", "status": "In Progress", "due": "Nov 15, 2026"}
     ]
 
-# --- Modal Dialog: File Ingest with Clean Alignment ---
+# --- Modal Dialog: Audio Ingestion ---
 @st.dialog("Record or Ingest Meeting Audio", width="large")
 def new_meeting_dialog():
-    st.caption("Upload meeting audio to transcribe speech into text and extract structured takeaways.")
-    uploaded = st.file_uploader("Select Audio File", type=["mp3", "wav", "m4a"], label_visibility="collapsed")
+    st.markdown("""
+        <p style='color: #717684; font-size: 0.9rem; margin-top: -6px; margin-bottom: 1.2rem;'>
+            Upload audio to transcribe speech directly into text and extract structured takeaways.
+        </p>
+    """, unsafe_allow_html=True)
+    
+    uploaded = st.file_uploader(
+        "Upload Audio File", 
+        type=["mp3", "wav", "m4a"], 
+        help="Supported formats: MP3, WAV, M4A (Max 200MB)"
+    )
     
     if uploaded:
-        st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top: 12px;'></div>", unsafe_allow_html=True)
         st.audio(uploaded)
-        st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top: 14px;'></div>", unsafe_allow_html=True)
         
         if st.button("🚀 Transcribe & Generate Insights", type="primary", use_container_width=True):
             with st.status("Running Synpact Intelligence Pipeline...", expanded=True) as status:
@@ -403,7 +447,7 @@ if current_nav == "Dashboard":
         </div>
     """, unsafe_allow_html=True)
 
-    # --- Active Transcript & Review Viewer ---
+    # --- Live Audio-to-Text Review Panel ---
     if st.session_state.transcript:
         st.markdown("""
             <div class="surface-card" style="margin-bottom: 1.5rem; min-height: auto;">
@@ -442,7 +486,7 @@ if current_nav == "Dashboard":
                 )
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # Two Main Panels
+    # 2 Main Columns
     col_left, col_right = st.columns(2, gap="medium")
     with col_left:
         st.markdown("""
