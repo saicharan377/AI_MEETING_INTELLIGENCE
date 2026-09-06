@@ -12,10 +12,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Clean Dark Matte CSS & Isolated Component Styling ---
+# --- Global UI Styling & Isolated Component Tweaks ---
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
     * {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
@@ -26,7 +26,81 @@ st.markdown("""
         color: #f3f4f6 !important;
     }
 
-    /* Clean Sidebar */
+    /* Landing Page Navigation */
+    .landing-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0 2rem 0;
+        width: 100%;
+    }
+    .landing-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #ffffff;
+    }
+    .landing-brand-dot {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #6366f1;
+        box-shadow: 0 0 16px #6366f1;
+    }
+    .landing-links {
+        display: flex;
+        gap: 2.2rem;
+        color: #94a3b8;
+        font-size: 0.92rem;
+        font-weight: 500;
+    }
+
+    /* Landing Page Hero Badge & Headings */
+    .hero-badge-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .hero-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(99, 102, 241, 0.08);
+        border: 1px solid rgba(99, 102, 241, 0.28);
+        border-radius: 9999px;
+        padding: 0.45rem 1.2rem;
+        font-size: 0.82rem;
+        color: #c7d2fe;
+        font-weight: 600;
+    }
+    .hero-title {
+        font-size: 4.8rem;
+        font-weight: 800;
+        line-height: 1.05;
+        text-align: center;
+        letter-spacing: -0.04em;
+        color: #ffffff;
+        margin: 0 auto 1.6rem auto;
+        max-width: 950px;
+    }
+    .hero-title span.purple-glow {
+        background: linear-gradient(135deg, #6366f1 20%, #a855f7 70%, #ec4899 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+        color: #8b8ea2;
+        font-size: 1.15rem;
+        text-align: center;
+        max-width: 680px;
+        margin: 0 auto 3rem auto;
+        line-height: 1.6;
+    }
+
+    /* Internal Workspace Sidebar */
     [data-testid="stSidebar"] {
         background-color: #08090d !important;
         border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
@@ -34,7 +108,7 @@ st.markdown("""
     }
     [data-testid="stSidebarNav"] { display: none; }
 
-    /* Default Action Buttons (excludes uploader internal buttons) */
+    /* Action Buttons (excluding file uploader internal components) */
     .stMainBlockContainer .stButton>button {
         background: #5b50e6 !important;
         color: #ffffff !important;
@@ -51,7 +125,6 @@ st.markdown("""
         transform: translateY(-1px);
     }
 
-    /* Navigation Label */
     .nav-label {
         font-size: 0.7rem;
         text-transform: uppercase;
@@ -61,7 +134,6 @@ st.markdown("""
         font-weight: 700;
     }
 
-    /* Bottom User Card */
     .user-footer {
         display: flex;
         align-items: center;
@@ -86,7 +158,7 @@ st.markdown("""
         flex-shrink: 0;
     }
 
-    /* KPI Metrics Cards */
+    /* Cards & KPIs */
     .metrics-row {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -123,7 +195,6 @@ st.markdown("""
     .metric-bot.positive { color: #10b981; }
     .metric-bot.negative { color: #ef4444; }
 
-    /* Surface Cards */
     .surface-card {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -143,7 +214,7 @@ st.markdown("""
         margin-top: 0.25rem;
     }
 
-    /* Fixed File Uploader Box & Alignment */
+    /* File Uploader Alignment & Card Design */
     [data-testid="stFileUploader"] {
         width: 100% !important;
         margin-top: 0.4rem !important;
@@ -152,7 +223,7 @@ st.markdown("""
         background-color: #111218 !important;
         border: 1px dashed rgba(255, 255, 255, 0.16) !important;
         border-radius: 12px !important;
-        padding: 1.6rem 1.2rem !important;
+        padding: 1.8rem 1.2rem !important;
         text-align: center !important;
     }
     [data-testid="stFileUploader"] section:hover {
@@ -193,7 +264,7 @@ st.markdown("""
         margin-bottom: 1.2rem;
     }
 
-    /* Meeting Card Feed Item */
+    /* Feed & Rows */
     .meeting-card-row {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -215,7 +286,6 @@ st.markdown("""
     .score-number { font-size: 1.35rem; font-weight: 700; color: #ffffff; line-height: 1; }
     .score-caption { font-size: 0.62rem; color: #636779; text-transform: uppercase; margin-top: 2px; }
 
-    /* Action Table Rows */
     .table-header {
         display: grid;
         grid-template-columns: 2.2fr 1.6fr 1fr 1fr 1fr 1fr;
@@ -237,7 +307,6 @@ st.markdown("""
         border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     }
 
-    /* Chat Assistant Bubble */
     .chat-bubble-assistant {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -273,30 +342,7 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
     st.session_state.username = None
 
-if not st.session_state.authenticated:
-    _, c, _ = st.columns([1, 1.2, 1])
-    with c:
-        st.markdown("<div style='height: 120px;'></div>", unsafe_allow_html=True)
-        st.markdown("""
-            <div style='text-align: center; margin-bottom: 1.5rem;'>
-                <div style='width: 44px; height: 44px; border-radius: 50%; background: #6366f1; margin: 0 auto 12px; box-shadow: 0 0 20px #6366f1;'></div>
-                <h2 style='margin:0; font-weight:700;'>Synpact<sup style='font-size: 0.6rem; color:#818cf8;'>AI</sup></h2>
-                <p style='color: #636779; font-size: 0.9rem;'>Sign in to your meeting intelligence workspace</p>
-            </div>
-        """, unsafe_allow_html=True)
-        with st.form("login_form"):
-            u = st.text_input("Username", value="charan")
-            p = st.text_input("Password", type="password", value="meeting2026")
-            if st.form_submit_button("Continue", use_container_width=True):
-                if USERS.get(u) == p:
-                    st.session_state.authenticated = True
-                    st.session_state.username = u.capitalize()
-                    st.rerun()
-                else:
-                    st.error("Invalid username or password")
-    st.stop()
-
-# --- Session State ---
+# --- Session State Data ---
 if "transcript" not in st.session_state:
     st.session_state.transcript = None
 if "report" not in st.session_state:
@@ -315,6 +361,22 @@ if "default_action_items" not in st.session_state:
         {"task": "Decide on IPL future and retirement status over the next 6-7 months", "meeting": "Quarterly Strategy Review", "owner": "Charan", "priority": "Medium", "status": "Open", "due": "Oct 01, 2026"},
         {"task": "Work hard for 9 months and assess body condition for IPL 2026", "meeting": "Product Roadmap Sync", "owner": "Team", "priority": "High", "status": "In Progress", "due": "Nov 15, 2026"}
     ]
+
+# --- Sign In Dialog Trigger ---
+@st.dialog("Sign in to Synpact AI", width="small")
+def login_dialog():
+    st.markdown("<p style='color: #8b8ea2; font-size: 0.88rem; margin-top:-6px;'>Enter your credentials to enter your workspace.</p>", unsafe_allow_html=True)
+    with st.form("landing_login_form"):
+        u = st.text_input("Username", value="charan")
+        p = st.text_input("Password", type="password", value="meeting2026")
+        submit = st.form_submit_button("Launch Workspace", use_container_width=True)
+        if submit:
+            if USERS.get(u) == p:
+                st.session_state.authenticated = True
+                st.session_state.username = u.capitalize()
+                st.rerun()
+            else:
+                st.error("Invalid username or password.")
 
 # --- Modal Dialog: Audio Ingestion ---
 @st.dialog("Record or Ingest Meeting Audio", width="large")
@@ -370,7 +432,66 @@ def new_meeting_dialog():
                     status.update(label="Processing Failed", state="error", expanded=True)
                     st.error(f"Intelligence synthesis error: {err}")
 
-# --- Sidebar ---
+# =============================================================
+# GATE: RENDER LANDING PAGE IF NOT LOGGED IN
+# =============================================================
+if not st.session_state.authenticated:
+    # Top Navbar
+    c_brand, c_navlinks, c_login, c_cta = st.columns([2.5, 3.5, 0.9, 1.2])
+    with c_brand:
+        st.markdown("""
+            <div class="landing-brand" style="margin-top: 5px;">
+                <div class="landing-brand-dot"></div>
+                <span>Synpact<sup style='font-size: 0.6rem; color:#818cf8; margin-left: 2px;'>AI</sup></span>
+            </div>
+        """, unsafe_allow_html=True)
+    with c_navlinks:
+        st.markdown("""
+            <div class="landing-links" style="margin-top: 10px; justify-content: center;">
+                <span>Features</span>
+                <span>Workflow</span>
+                <span>Pricing</span>
+            </div>
+        """, unsafe_allow_html=True)
+    with c_login:
+        if st.button("Log in", use_container_width=True, key="top_login"):
+            login_dialog()
+    with c_cta:
+        if st.button("Start free", type="primary", use_container_width=True, key="top_start"):
+            login_dialog()
+
+    st.markdown("<div style='height: 35px;'></div>", unsafe_allow_html=True)
+
+    # Hero Badge & Headings
+    st.markdown("""
+        <div class="hero-badge-container">
+            <div class="hero-pill">
+                <span>🪄</span> AI Meeting Intelligence
+            </div>
+        </div>
+        <div class="hero-title">
+            Turn every<br>conversation into<br><span class="purple-glow">momentum.</span>
+        </div>
+        <div class="hero-subtitle">
+            Synpact AI transforms meetings into searchable knowledge, clear decisions,
+            and accountable action. Stop losing ideas in the transcript.
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Centered Action Buttons
+    _, cta_left, cta_right, _ = st.columns([2.2, 1.4, 1.4, 2.2])
+    with cta_left:
+        if st.button("Start free →", type="primary", use_container_width=True, key="hero_start_btn"):
+            login_dialog()
+    with cta_right:
+        if st.button("▷ See how it works", use_container_width=True, key="hero_demo_btn"):
+            login_dialog()
+
+    st.stop()
+
+# =============================================================
+# WORKSPACE: APP SIDEBAR & SCREEN ROUTING
+# =============================================================
 with st.sidebar:
     st.markdown("""
         <div style='display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem;'>
@@ -454,7 +575,7 @@ if current_nav == "Dashboard":
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
                     <div>
                         <h3 class="surface-title">🎙️ Latest Audio Transcription</h3>
-                        <div class="surface-subtitle">Extracted speech-to-text log ready for download.</div>
+                        <div class="surface-subtitle">Extracted speech-to-text log ready for review and download.</div>
                     </div>
                 </div>
         """, unsafe_allow_html=True)
