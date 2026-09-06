@@ -15,7 +15,7 @@ st.set_page_config(
 # --- Synpact Dark UI Styling ---
 st.markdown("""
 <style>
-    @import url('[https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap)');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
     * {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
@@ -260,32 +260,33 @@ def new_meeting_dialog():
     if uploaded:
         st.audio(uploaded)
         if st.button("Run Intelligence Engine", type="primary", use_container_width=True):
-            with st.spinner("Transcribing and synthesizing with Gemini..."):
+            with st.spinner("Transcribing and synthesizing with Gemini 3.6 Flash..."):
                 t = transcribe_audio_file(uploaded)
-                r = analyze_transcript(t)
-                st.session_state.transcript = t
-                st.session_state.report = r
-                
-                # Append into history
-                st.session_state.meetings_history.insert(0, {
-                    "title": r.meeting_title,
-                    "date": datetime.today().strftime("%b %d, %Y"),
-                    "duration": "3 min",
-                    "participants": 1,
-                    "score": 70
-                })
-                # Append action items
-                for ai in r.action_items:
-                    st.session_state.default_action_items.insert(0, {
-                        "task": ai.task,
-                        "meeting": r.meeting_title,
-                        "owner": ai.owner,
-                        "priority": "Medium",
-                        "status": "Open",
-                        "due": ai.due_date
+                try:
+                    r = analyze_transcript(t)
+                    st.session_state.transcript = t
+                    st.session_state.report = r
+                    
+                    st.session_state.meetings_history.insert(0, {
+                        "title": r.meeting_title,
+                        "date": datetime.today().strftime("%b %d, %Y"),
+                        "duration": "3 min",
+                        "participants": 1,
+                        "score": 70
                     })
-                st.session_state.messages = []
-                st.rerun()
+                    for ai in r.action_items:
+                        st.session_state.default_action_items.insert(0, {
+                            "task": ai.task,
+                            "meeting": r.meeting_title,
+                            "owner": ai.owner,
+                            "priority": "Medium",
+                            "status": "Open",
+                            "due": ai.due_date
+                        })
+                    st.session_state.messages = []
+                    st.rerun()
+                except Exception as err:
+                    st.error(f"Processing failed: {err}")
 
 # --- Sidebar ---
 with st.sidebar:
