@@ -12,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Global UI Styling & Isolated Component Tweaks ---
+# --- Global CSS: Matte Dark & Custom Sign-In Card ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -22,108 +22,147 @@ st.markdown("""
     }
 
     .stApp {
-        background-color: #0b0c10 !important;
+        background-color: #0d0e12 !important;
         color: #f3f4f6 !important;
     }
 
-    /* Landing Page Navigation */
-    .landing-nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 0 2rem 0;
-        width: 100%;
-    }
-    .landing-brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 1.35rem;
-        font-weight: 700;
-        color: #ffffff;
-    }
-    .landing-brand-dot {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: #6366f1;
-        box-shadow: 0 0 16px #6366f1;
-    }
-    .landing-links {
-        display: flex;
-        gap: 2.2rem;
-        color: #94a3b8;
-        font-size: 0.92rem;
-        font-weight: 500;
-    }
-
-    /* Landing Page Hero Badge & Headings */
-    .hero-badge-container {
+    /* Auth Background & Center Layout */
+    .login-wrapper {
         display: flex;
         justify-content: center;
-        margin-top: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    .hero-pill {
-        display: inline-flex;
         align-items: center;
-        gap: 8px;
-        background: rgba(99, 102, 241, 0.08);
-        border: 1px solid rgba(99, 102, 241, 0.28);
-        border-radius: 9999px;
-        padding: 0.45rem 1.2rem;
-        font-size: 0.82rem;
-        color: #c7d2fe;
-        font-weight: 600;
-    }
-    .hero-title {
-        font-size: 4.8rem;
-        font-weight: 800;
-        line-height: 1.05;
-        text-align: center;
-        letter-spacing: -0.04em;
-        color: #ffffff;
-        margin: 0 auto 1.6rem auto;
-        max-width: 950px;
-    }
-    .hero-title span.purple-glow {
-        background: linear-gradient(135deg, #6366f1 20%, #a855f7 70%, #ec4899 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    .hero-subtitle {
-        color: #8b8ea2;
-        font-size: 1.15rem;
-        text-align: center;
-        max-width: 680px;
-        margin: 0 auto 3rem auto;
-        line-height: 1.6;
+        min-height: 88vh;
+        width: 100%;
     }
 
-    /* Internal Workspace Sidebar */
+    .login-box {
+        background: #14161d;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 28px;
+        padding: 3.2rem 2.6rem 2.8rem 2.6rem;
+        width: 100%;
+        max-width: 440px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .login-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        background: #645bf6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.4rem auto;
+        box-shadow: 0 8px 24px rgba(100, 91, 246, 0.35);
+    }
+
+    .login-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #ffffff;
+    }
+
+    .login-title {
+        font-size: 1.85rem;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: -0.02em;
+        margin: 0 0 0.4rem 0;
+    }
+
+    .login-subtitle {
+        font-size: 0.95rem;
+        color: #7b8092;
+        margin-bottom: 2rem;
+    }
+
+    /* Style Streamlit Inputs Inside Login Form */
+    [data-testid="stForm"] {
+        border: none !important;
+        padding: 0 !important;
+        background: transparent !important;
+    }
+
+    [data-testid="stForm"] input {
+        background-color: #0b0c10 !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 14px !important;
+        color: #ffffff !important;
+        padding: 0.9rem 1.1rem !important;
+        font-size: 0.95rem !important;
+        height: auto !important;
+    }
+
+    [data-testid="stForm"] input:focus {
+        border-color: #645bf6 !important;
+        box-shadow: 0 0 0 1px #645bf6 !important;
+    }
+
+    /* Primary Sign In Button */
+    .stButton.signin-btn > button {
+        background: #5b5ff5 !important;
+        color: #ffffff !important;
+        border-radius: 14px !important;
+        border: none !important;
+        font-weight: 600 !important;
+        padding: 0.85rem 1rem !important;
+        font-size: 1rem !important;
+        width: 100% !important;
+        margin-top: 0.5rem !important;
+        box-shadow: 0 8px 20px rgba(91, 95, 245, 0.25) !important;
+        transition: all 0.2s ease !important;
+    }
+    .stButton.signin-btn > button:hover {
+        opacity: 0.92 !important;
+        transform: translateY(-1px) !important;
+    }
+
+    /* Google Button */
+    .stButton.google-btn > button {
+        background: #0f1015 !important;
+        color: #ffffff !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        font-weight: 500 !important;
+        padding: 0.75rem 1rem !important;
+        font-size: 0.92rem !important;
+        width: 100% !important;
+        box-shadow: none !important;
+    }
+    .stButton.google-btn > button:hover {
+        background: #181a24 !important;
+        border-color: rgba(255, 255, 255, 0.16) !important;
+    }
+
+    .divider-text {
+        color: #55596b;
+        font-size: 0.85rem;
+        margin: 1.4rem 0 1.2rem 0;
+        position: relative;
+    }
+
+    .login-footer-links {
+        margin-top: 1.8rem;
+        font-size: 0.88rem;
+        color: #7b8092;
+    }
+    .login-footer-links a {
+        color: #ffffff !important;
+        text-decoration: none !important;
+        font-weight: 600 !important;
+    }
+
+    /* --- App Workspace Styling --- */
     [data-testid="stSidebar"] {
         background-color: #08090d !important;
         border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
         padding: 1.5rem 1rem !important;
     }
     [data-testid="stSidebarNav"] { display: none; }
-
-    /* Action Buttons (excluding file uploader internal components) */
-    .stMainBlockContainer .stButton>button {
-        background: #5b50e6 !important;
-        color: #ffffff !important;
-        border-radius: 10px !important;
-        border: none !important;
-        font-weight: 600 !important;
-        padding: 0.55rem 1.25rem !important;
-        font-size: 0.88rem !important;
-        box-shadow: 0 4px 14px rgba(91, 80, 230, 0.25);
-        transition: all 0.2s ease;
-    }
-    .stMainBlockContainer .stButton>button:hover {
-        opacity: 0.92;
-        transform: translateY(-1px);
-    }
 
     .nav-label {
         font-size: 0.7rem;
@@ -158,7 +197,7 @@ st.markdown("""
         flex-shrink: 0;
     }
 
-    /* Cards & KPIs */
+    /* Metrics Grid */
     .metrics-row {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -188,13 +227,11 @@ st.markdown("""
         color: #ffffff;
         margin: 0.8rem 0 0.3rem 0;
     }
-    .metric-bot {
-        font-size: 0.78rem;
-        color: #636779;
-    }
+    .metric-bot { font-size: 0.78rem; color: #636779; }
     .metric-bot.positive { color: #10b981; }
     .metric-bot.negative { color: #ef4444; }
 
+    /* Clean Card Surfaces */
     .surface-card {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -202,22 +239,13 @@ st.markdown("""
         padding: 1.5rem;
         min-height: 380px;
     }
-    .surface-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #ffffff;
-        margin: 0;
-    }
-    .surface-subtitle {
-        font-size: 0.82rem;
-        color: #636779;
-        margin-top: 0.25rem;
-    }
+    .surface-title { font-size: 1.1rem; font-weight: 600; color: #ffffff; margin: 0; }
+    .surface-subtitle { font-size: 0.82rem; color: #636779; margin-top: 0.25rem; }
 
-    /* File Uploader Alignment & Card Design */
+    /* File Uploader Clean Card Style */
     [data-testid="stFileUploader"] {
         width: 100% !important;
-        margin-top: 0.4rem !important;
+        margin-top: 0.5rem !important;
     }
     [data-testid="stFileUploader"] section {
         background-color: #111218 !important;
@@ -227,7 +255,7 @@ st.markdown("""
         text-align: center !important;
     }
     [data-testid="stFileUploader"] section:hover {
-        border-color: #5b50e6 !important;
+        border-color: #5b5ff5 !important;
     }
     [data-testid="stFileUploader"] button {
         background: #1e1f2b !important;
@@ -239,23 +267,15 @@ st.markdown("""
         box-shadow: none !important;
         transform: none !important;
     }
-    [data-testid="stFileUploader"] button:hover {
-        background: #272838 !important;
-        border-color: rgba(255, 255, 255, 0.25) !important;
-    }
-    [data-testid="stFileUploaderDropzoneInstructions"] {
-        color: #8b8ea2 !important;
-        font-size: 0.84rem !important;
-    }
 
-    /* Interactive Transcript Preview Card */
+    /* Live Transcript Display Box */
     .transcript-container {
         background: #0d0e14;
         border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 12px;
         padding: 1.2rem;
         font-family: monospace !important;
-        font-size: 0.85rem;
+        font-size: 0.88rem;
         color: #cbd5e1;
         max-height: 280px;
         overflow-y: auto;
@@ -264,7 +284,7 @@ st.markdown("""
         margin-bottom: 1.2rem;
     }
 
-    /* Feed & Rows */
+    /* Meeting Feed & Table */
     .meeting-card-row {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -306,43 +326,14 @@ st.markdown("""
         color: #cbd5e1;
         border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     }
-
-    .chat-bubble-assistant {
-        background: #111218;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 14px;
-        padding: 1.2rem;
-        margin-bottom: 1.2rem;
-        color: #cbd5e1;
-        font-size: 0.92rem;
-        line-height: 1.6;
-    }
-    .chat-prompt-pill {
-        background: #12131a;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 20px;
-        padding: 0.45rem 0.9rem;
-        color: #7b7f94;
-        font-size: 0.78rem;
-        display: inline-block;
-        margin-right: 8px;
-        margin-top: 8px;
-    }
 </style>
 """, unsafe_allow_html=True)
 
-# --- Authentication Logic ---
-USERS = {
-    "admin": "admin123",
-    "charan": "meeting2026",
-    "saicharan": "meeting2026"
-}
-
+# --- App State Management ---
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
-    st.session_state.username = None
-
-# --- Session State Data ---
+if "user_email" not in st.session_state:
+    st.session_state.user_email = ""
 if "transcript" not in st.session_state:
     st.session_state.transcript = None
 if "report" not in st.session_state:
@@ -362,23 +353,64 @@ if "default_action_items" not in st.session_state:
         {"task": "Work hard for 9 months and assess body condition for IPL 2026", "meeting": "Product Roadmap Sync", "owner": "Team", "priority": "High", "status": "In Progress", "due": "Nov 15, 2026"}
     ]
 
-# --- Sign In Dialog Trigger ---
-@st.dialog("Sign in to Synpact AI", width="small")
-def login_dialog():
-    st.markdown("<p style='color: #8b8ea2; font-size: 0.88rem; margin-top:-6px;'>Enter your credentials to enter your workspace.</p>", unsafe_allow_html=True)
-    with st.form("landing_login_form"):
-        u = st.text_input("Username", value="charan")
-        p = st.text_input("Password", type="password", value="meeting2026")
-        submit = st.form_submit_button("Launch Workspace", use_container_width=True)
-        if submit:
-            if USERS.get(u) == p:
-                st.session_state.authenticated = True
-                st.session_state.username = u.capitalize()
-                st.rerun()
-            else:
-                st.error("Invalid username or password.")
+# =============================================================
+# SCREEN: AUTHENTICATION (EXACT FIGMA / SCREENSHOT REPLICA)
+# =============================================================
+if not st.session_state.authenticated:
+    _, center_col, _ = st.columns([1, 1.3, 1])
+    with center_col:
+        st.markdown("<div style='height: 40px;'></div>", unsafe_allow_html=True)
+        
+        # Header Icon & Text
+        st.markdown("""
+            <div style="background: #14161d; border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 28px; padding: 2.8rem 2.2rem 2.2rem 2.2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); text-align: center;">
+                <div class="login-icon">
+                    <div class="login-dot"></div>
+                </div>
+                <h1 class="login-title">Synpact AI</h1>
+                <div class="login-subtitle">Sign in to your workspace</div>
+        """, unsafe_allow_html=True)
 
-# --- Modal Dialog: Audio Ingestion ---
+        with st.form("auth_form", clear_on_submit=False):
+            email_in = st.text_input("Email", placeholder="Email address", label_visibility="collapsed")
+            pass_in = st.text_input("Password", placeholder="Password", type="password", label_visibility="collapsed")
+            
+            st.markdown('<div class="stButton signin-btn">', unsafe_allow_html=True)
+            submitted = st.form_submit_button("Sign In", use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            if submitted:
+                # Accepts any valid input or default credentials
+                if email_in and pass_in:
+                    st.session_state.authenticated = True
+                    st.session_state.user_email = email_in
+                    st.rerun()
+                else:
+                    st.error("Please enter both email and password.")
+
+        st.markdown('<div class="divider-text">or</div>', unsafe_allow_html=True)
+
+        # Google Sign-in Alternative
+        st.markdown('<div class="stButton google-btn">', unsafe_allow_html=True)
+        if st.button("Continue with Google", use_container_width=True):
+            st.session_state.authenticated = True
+            st.session_state.user_email = "charanvaygeti@gmail.com"
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown("""
+                <div class="login-footer-links">
+                    <div style="margin-bottom: 12px;"><a href="#" style="color:#7b8092 !important; font-weight: 500 !important;">Forgot password?</a></div>
+                    <div>Don't have an account? <a href="#" style="color:#ffffff !important; font-weight: 600 !important;">Sign up</a></div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    st.stop()
+
+# =============================================================
+# MODAL DIALOG: AUDIO INGESTION & SPEECH-TO-TEXT
+# =============================================================
 @st.dialog("Record or Ingest Meeting Audio", width="large")
 def new_meeting_dialog():
     st.markdown("""
@@ -400,7 +432,7 @@ def new_meeting_dialog():
         
         if st.button("🚀 Transcribe & Generate Insights", type="primary", use_container_width=True):
             with st.status("Running Synpact Intelligence Pipeline...", expanded=True) as status:
-                st.write("🎙️ Converting speech to text (Faster-Whisper)...")
+                st.write("🎙️ Converting audio speech to text (Faster-Whisper)...")
                 t = transcribe_audio_file(uploaded)
                 st.session_state.transcript = t
                 
@@ -433,69 +465,14 @@ def new_meeting_dialog():
                     st.error(f"Intelligence synthesis error: {err}")
 
 # =============================================================
-# GATE: RENDER LANDING PAGE IF NOT LOGGED IN
-# =============================================================
-if not st.session_state.authenticated:
-    # Top Navbar
-    c_brand, c_navlinks, c_login, c_cta = st.columns([2.5, 3.5, 0.9, 1.2])
-    with c_brand:
-        st.markdown("""
-            <div class="landing-brand" style="margin-top: 5px;">
-                <div class="landing-brand-dot"></div>
-                <span>Synpact<sup style='font-size: 0.6rem; color:#818cf8; margin-left: 2px;'>AI</sup></span>
-            </div>
-        """, unsafe_allow_html=True)
-    with c_navlinks:
-        st.markdown("""
-            <div class="landing-links" style="margin-top: 10px; justify-content: center;">
-                <span>Features</span>
-                <span>Workflow</span>
-                <span>Pricing</span>
-            </div>
-        """, unsafe_allow_html=True)
-    with c_login:
-        if st.button("Log in", use_container_width=True, key="top_login"):
-            login_dialog()
-    with c_cta:
-        if st.button("Start free", type="primary", use_container_width=True, key="top_start"):
-            login_dialog()
-
-    st.markdown("<div style='height: 35px;'></div>", unsafe_allow_html=True)
-
-    # Hero Badge & Headings
-    st.markdown("""
-        <div class="hero-badge-container">
-            <div class="hero-pill">
-                <span>🪄</span> AI Meeting Intelligence
-            </div>
-        </div>
-        <div class="hero-title">
-            Turn every<br>conversation into<br><span class="purple-glow">momentum.</span>
-        </div>
-        <div class="hero-subtitle">
-            Synpact AI transforms meetings into searchable knowledge, clear decisions,
-            and accountable action. Stop losing ideas in the transcript.
-        </div>
-    """, unsafe_allow_html=True)
-
-    # Centered Action Buttons
-    _, cta_left, cta_right, _ = st.columns([2.2, 1.4, 1.4, 2.2])
-    with cta_left:
-        if st.button("Start free →", type="primary", use_container_width=True, key="hero_start_btn"):
-            login_dialog()
-    with cta_right:
-        if st.button("▷ See how it works", use_container_width=True, key="hero_demo_btn"):
-            login_dialog()
-
-    st.stop()
-
-# =============================================================
-# WORKSPACE: APP SIDEBAR & SCREEN ROUTING
+# SIDEBAR
 # =============================================================
 with st.sidebar:
     st.markdown("""
         <div style='display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem;'>
-            <div style='width: 24px; height: 24px; border-radius: 50%; background: #6366f1; box-shadow: 0 0 12px #6366f1;'></div>
+            <div style='width: 24px; height: 24px; border-radius: 7px; background: #645bf6; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 12px #645bf6;'>
+                <div style='width: 7px; height: 7px; border-radius: 50%; background: #ffffff;'></div>
+            </div>
             <span style='font-size: 1.2rem; font-weight: 700; color: #ffffff;'>Synpact<sup style='font-size: 0.55rem; color:#818cf8; margin-left:2px;'>AI</sup></span>
         </div>
     """, unsafe_allow_html=True)
@@ -515,12 +492,16 @@ with st.sidebar:
         st.session_state.transcript = None
         st.rerun()
 
-    st.markdown("""
+    disp_email = st.session_state.user_email if st.session_state.user_email else "charanvaygeti@gmail.com"
+    initials = "CV" if "charan" in disp_email.lower() else disp_email[:2].upper()
+    display_name = "Charan Vaygeti" if "charan" in disp_email.lower() else disp_email.split("@")[0].capitalize()
+
+    st.markdown(f"""
         <div class="user-footer">
-            <div class="user-avatar">CV</div>
+            <div class="user-avatar">{initials}</div>
             <div style="overflow: hidden;">
-                <div style="font-size: 0.85rem; font-weight: 600; color: #ffffff;">Charan Vaygeti</div>
-                <div style="font-size: 0.72rem; color: #636779;">charanvaygeti@gmail.com</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: #ffffff;">{display_name}</div>
+                <div style="font-size: 0.72rem; color: #636779; text-overflow: ellipsis; overflow: hidden;">{disp_email}</div>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -531,8 +512,8 @@ with st.sidebar:
 if current_nav == "Dashboard":
     col_head, col_btn = st.columns([3.5, 1])
     with col_head:
-        st.markdown("""
-            <h1 style='font-size: 1.85rem; font-weight: 700; margin: 0; color: #ffffff;'>Good evening, Charan.</h1>
+        st.markdown(f"""
+            <h1 style='font-size: 1.85rem; font-weight: 700; margin: 0; color: #ffffff;'>Good evening, {display_name.split()[0]}.</h1>
             <p style='color: #717684; font-size: 0.95rem; margin-top: 0.25rem;'>Here's what happened across your meetings.</p>
         """, unsafe_allow_html=True)
     with col_btn:
@@ -568,21 +549,21 @@ if current_nav == "Dashboard":
         </div>
     """, unsafe_allow_html=True)
 
-    # --- Live Audio-to-Text Review Panel ---
+    # --- Live Speech-to-Text Viewer & Download Panel ---
     if st.session_state.transcript:
         st.markdown("""
             <div class="surface-card" style="margin-bottom: 1.5rem; min-height: auto;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
                     <div>
-                        <h3 class="surface-title">🎙️ Latest Audio Transcription</h3>
-                        <div class="surface-subtitle">Extracted speech-to-text log ready for review and download.</div>
+                        <h3 class="surface-title">🎙️ Audio Transcription Log</h3>
+                        <div class="surface-subtitle">Converted speech-to-text ready for export and copy.</div>
                     </div>
                 </div>
         """, unsafe_allow_html=True)
         
         st.markdown(f'<div class="transcript-container">{st.session_state.transcript}</div>', unsafe_allow_html=True)
         
-        dl_col1, dl_col2, _ = st.columns([1.3, 1.3, 2])
+        dl_col1, dl_col2, _ = st.columns([1.4, 1.4, 1.8])
         with dl_col1:
             st.download_button(
                 label="📥 Download Transcript (.txt)",
