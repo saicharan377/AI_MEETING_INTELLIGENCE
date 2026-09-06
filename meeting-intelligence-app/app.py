@@ -12,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Synpact Dark UI Styling ---
+# --- Clean Dark Matte CSS & Polished Alignment ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
@@ -26,58 +26,66 @@ st.markdown("""
         color: #f3f4f6 !important;
     }
 
+    /* Clean Sidebar */
     [data-testid="stSidebar"] {
         background-color: #08090d !important;
         border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
-        padding-top: 1.2rem;
+        padding: 1.5rem 1rem !important;
     }
     [data-testid="stSidebarNav"] { display: none; }
 
+    /* Button Consistency */
     .stButton>button {
         background: #5b50e6 !important;
         color: #ffffff !important;
         border-radius: 10px !important;
         border: none !important;
         font-weight: 600 !important;
-        padding: 0.5rem 1.2rem !important;
+        padding: 0.55rem 1.25rem !important;
         font-size: 0.88rem !important;
+        box-shadow: 0 4px 14px rgba(91, 80, 230, 0.25);
+        transition: all 0.2s ease;
     }
     .stButton>button:hover {
         opacity: 0.92;
+        transform: translateY(-1px);
     }
 
     .nav-label {
-        font-size: 0.68rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
         color: #55596b;
-        margin: 1.2rem 0 0.5rem 0.5rem;
+        margin: 1.2rem 0 0.5rem 0.4rem;
         font-weight: 700;
     }
 
+    /* Bottom User Card */
     .user-footer {
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 0.65rem 0.75rem;
+        gap: 12px;
+        padding: 0.75rem;
         background: #111218;
-        border-radius: 10px;
+        border-radius: 12px;
         border: 1px solid rgba(255, 255, 255, 0.05);
-        margin-top: 1.5rem;
+        margin-top: 2rem;
     }
     .user-avatar {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
-        background: #ec4899;
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         font-weight: 700;
+        flex-shrink: 0;
     }
 
+    /* KPI Metrics Cards */
     .metrics-row {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -105,7 +113,7 @@ st.markdown("""
         font-size: 2rem;
         font-weight: 700;
         color: #ffffff;
-        margin: 0.8rem 0 0.4rem 0;
+        margin: 0.8rem 0 0.3rem 0;
     }
     .metric-bot {
         font-size: 0.78rem;
@@ -114,15 +122,16 @@ st.markdown("""
     .metric-bot.positive { color: #10b981; }
     .metric-bot.negative { color: #ef4444; }
 
+    /* Surface Cards */
     .surface-card {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 14px;
-        padding: 1.4rem;
+        border-radius: 16px;
+        padding: 1.5rem;
         min-height: 380px;
     }
     .surface-title {
-        font-size: 1.05rem;
+        font-size: 1.1rem;
         font-weight: 600;
         color: #ffffff;
         margin: 0;
@@ -133,10 +142,27 @@ st.markdown("""
         margin-top: 0.25rem;
     }
 
+    /* Transcript Review Box */
+    .transcript-container {
+        background: #0d0e14;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 1.2rem;
+        font-family: monospace !important;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        max-height: 280px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    /* Meeting Feed Item */
     .meeting-card-row {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
+        border-radius: 14px;
         padding: 1.2rem 1.4rem;
         display: flex;
         justify-content: space-between;
@@ -154,6 +180,7 @@ st.markdown("""
     .score-number { font-size: 1.35rem; font-weight: 700; color: #ffffff; line-height: 1; }
     .score-caption { font-size: 0.62rem; color: #636779; text-transform: uppercase; margin-top: 2px; }
 
+    /* Action Table */
     .table-header {
         display: grid;
         grid-template-columns: 2.2fr 1.6fr 1fr 1fr 1fr 1fr;
@@ -175,6 +202,7 @@ st.markdown("""
         border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     }
 
+    /* Chat Assistant Card */
     .chat-bubble-assistant {
         background: #111218;
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -242,29 +270,37 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 if "meetings_history" not in st.session_state:
     st.session_state.meetings_history = [
-        {"title": "Untitled Meeting", "date": "Sep 6, 2026", "duration": "3 min", "participants": 0, "score": 0},
-        {"title": "Untitled Meeting", "date": "Sep 1, 2026", "duration": "0 min", "participants": 0, "score": 0},
-        {"title": "Untitled Meeting", "date": "Sep 1, 2026", "duration": "3 min", "participants": 0, "score": 0},
+        {"title": "Quarterly Strategy Review", "date": "Sep 6, 2026", "duration": "3 min", "participants": 2, "score": 85},
+        {"title": "Product Roadmap Sync", "date": "Sep 1, 2026", "duration": "5 min", "participants": 4, "score": 75},
+        {"title": "Design Alignment", "date": "Aug 28, 2026", "duration": "2 min", "participants": 3, "score": 60},
     ]
 if "default_action_items" not in st.session_state:
     st.session_state.default_action_items = [
-        {"task": "Decide on playing another IPL season based on physical fitness", "meeting": "Untitled Meeting", "owner": "Unassigned", "priority": "Medium", "status": "Open", "due": "No Due Date"},
-        {"task": "Decide on IPL future and retirement status over the next 6-7 months", "meeting": "Untitled Meeting", "owner": "Unassigned", "priority": "Medium", "status": "Open", "due": "No Due Date"},
-        {"task": "Work hard for 9 months and assess body condition for IPL 2026", "meeting": "Untitled Meeting", "owner": "Unassigned", "priority": "Medium", "status": "Open", "due": "No Due Date"}
+        {"task": "Decide on playing another IPL season based on physical fitness", "meeting": "Quarterly Strategy Review", "owner": "Charan", "priority": "Medium", "status": "Open", "due": "Sep 15, 2026"},
+        {"task": "Decide on IPL future and retirement status over the next 6-7 months", "meeting": "Quarterly Strategy Review", "owner": "Charan", "priority": "Medium", "status": "Open", "due": "Oct 01, 2026"},
+        {"task": "Work hard for 9 months and assess body condition for IPL 2026", "meeting": "Product Roadmap Sync", "owner": "Team", "priority": "High", "status": "In Progress", "due": "Nov 15, 2026"}
     ]
 
-# --- Modal: Ingest New Audio ---
-@st.dialog("Record or Ingest Meeting Audio")
+# --- Modal Dialog: File Ingest with Clean Alignment ---
+@st.dialog("Record or Ingest Meeting Audio", width="large")
 def new_meeting_dialog():
-    uploaded = st.file_uploader("Upload audio file", type=["mp3", "wav", "m4a"])
+    st.caption("Upload meeting audio to transcribe speech into text and extract structured takeaways.")
+    uploaded = st.file_uploader("Select Audio File", type=["mp3", "wav", "m4a"], label_visibility="collapsed")
+    
     if uploaded:
+        st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
         st.audio(uploaded)
-        if st.button("Run Intelligence Engine", type="primary", use_container_width=True):
-            with st.spinner("Transcribing and synthesizing with Gemini 3.6 Flash..."):
+        st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
+        
+        if st.button("🚀 Transcribe & Generate Insights", type="primary", use_container_width=True):
+            with st.status("Running Synpact Intelligence Pipeline...", expanded=True) as status:
+                st.write("🎙️ Converting speech to text (Faster-Whisper)...")
                 t = transcribe_audio_file(uploaded)
+                st.session_state.transcript = t
+                
+                st.write("🧠 Synthesizing action items & decisions (Gemini 3.6 Flash)...")
                 try:
                     r = analyze_transcript(t)
-                    st.session_state.transcript = t
                     st.session_state.report = r
                     
                     st.session_state.meetings_history.insert(0, {
@@ -272,7 +308,7 @@ def new_meeting_dialog():
                         "date": datetime.today().strftime("%b %d, %Y"),
                         "duration": "3 min",
                         "participants": 1,
-                        "score": 70
+                        "score": 88
                     })
                     for ai in r.action_items:
                         st.session_state.default_action_items.insert(0, {
@@ -284,30 +320,31 @@ def new_meeting_dialog():
                             "due": ai.due_date
                         })
                     st.session_state.messages = []
+                    status.update(label="Complete! Insights Ready.", state="complete", expanded=False)
                     st.rerun()
                 except Exception as err:
-                    st.error(f"Processing failed: {err}")
+                    status.update(label="Processing Failed", state="error", expanded=True)
+                    st.error(f"Intelligence synthesis error: {err}")
 
 # --- Sidebar ---
 with st.sidebar:
     st.markdown("""
-        <div style='display: flex; align-items: center; gap: 9px; margin-bottom: 1.5rem;'>
-            <div style='width: 22px; height: 22px; border-radius: 50%; background: #6366f1; box-shadow: 0 0 10px #6366f1;'></div>
-            <span style='font-size: 1.15rem; font-weight: 700; color: #ffffff;'>Synpact<sup style='font-size: 0.55rem; color:#818cf8; margin-left:2px;'>AI</sup></span>
+        <div style='display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem;'>
+            <div style='width: 24px; height: 24px; border-radius: 50%; background: #6366f1; box-shadow: 0 0 12px #6366f1;'></div>
+            <span style='font-size: 1.2rem; font-weight: 700; color: #ffffff;'>Synpact<sup style='font-size: 0.55rem; color:#818cf8; margin-left:2px;'>AI</sup></span>
         </div>
     """, unsafe_allow_html=True)
 
     st.markdown('<div class="nav-label">NAVIGATION</div>', unsafe_allow_html=True)
-    
     current_nav = st.radio(
         "Navigation",
         ["Dashboard", "All Meetings", "Action Items", "Analytics", "Search", "Ask Synpact"],
         label_visibility="collapsed"
     )
 
-    st.markdown("<div style='height: 160px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 140px;'></div>", unsafe_allow_html=True)
     
-    if st.button("Sign Out", use_container_width=True):
+    if st.button("🚪 Sign Out", use_container_width=True):
         st.session_state.authenticated = False
         st.session_state.report = None
         st.session_state.transcript = None
@@ -340,6 +377,7 @@ if current_nav == "Dashboard":
 
     st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
 
+    # 4 Metric Cards
     st.markdown(f"""
         <div class="metrics-row">
             <div class="metric-card">
@@ -365,6 +403,46 @@ if current_nav == "Dashboard":
         </div>
     """, unsafe_allow_html=True)
 
+    # --- Active Transcript & Review Viewer ---
+    if st.session_state.transcript:
+        st.markdown("""
+            <div class="surface-card" style="margin-bottom: 1.5rem; min-height: auto;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                    <div>
+                        <h3 class="surface-title">🎙️ Latest Audio Transcription</h3>
+                        <div class="surface-subtitle">Extracted speech-to-text log ready for download.</div>
+                    </div>
+                </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(f'<div class="transcript-container">{st.session_state.transcript}</div>', unsafe_allow_html=True)
+        
+        dl_col1, dl_col2, _ = st.columns([1.3, 1.3, 2])
+        with dl_col1:
+            st.download_button(
+                label="📥 Download Transcript (.txt)",
+                data=st.session_state.transcript,
+                file_name="meeting_transcript.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
+        with dl_col2:
+            if st.session_state.report:
+                brief_md = f"# {st.session_state.report.meeting_title}\n\n"
+                brief_md += "## Executive Summary\n" + "\n".join([f"- {s}" for s in st.session_state.report.executive_summary]) + "\n\n"
+                brief_md += "## Decisions\n" + "\n".join([f"- {d}" for d in st.session_state.report.key_decisions]) + "\n\n"
+                brief_md += "## Actions\n" + "\n".join([f"- {a.task} ({a.owner})" for a in st.session_state.report.action_items])
+                
+                st.download_button(
+                    label="📄 Download Briefing (.md)",
+                    data=brief_md,
+                    file_name="executive_brief.md",
+                    mime="text/markdown",
+                    use_container_width=True
+                )
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # Two Main Panels
     col_left, col_right = st.columns(2, gap="medium")
     with col_left:
         st.markdown("""
@@ -431,7 +509,7 @@ elif current_nav == "All Meetings":
             <div class="meeting-card-row">
                 <div>
                     <div style="font-size: 1.05rem; font-weight: 600; color: #ffffff; margin-bottom: 0.35rem;">{m['title']}</div>
-                    <div style="font-size: 0.85rem; color: #717684; margin-bottom: 0.6rem;">Summary generation pending...</div>
+                    <div style="font-size: 0.85rem; color: #717684; margin-bottom: 0.6rem;">Summary available • Fully indexed</div>
                     <div style="font-size: 0.78rem; color: #55596b;">{m['date']} &nbsp;•&nbsp; {m['duration']} &nbsp;•&nbsp; {m['participants']} participants</div>
                 </div>
                 <div class="meeting-score-pill">
@@ -474,10 +552,10 @@ elif current_nav == "Action Items":
             <div class="table-row">
                 <div style="color: #ffffff; font-weight:500;">{item['task']}</div>
                 <div style="color: #636779;">🔗 {item['meeting']}</div>
-                <div style="color: #636779;">{item['owner'][:3]}.. ⌄</div>
-                <div><span style="background:#171822; padding:3px 8px; border-radius:6px; color:#94a3b8; font-size:0.75rem;">{item['priority']} ⌄</span></div>
-                <div><span style="background:#171822; padding:3px 8px; border-radius:6px; color:#94a3b8; font-size:0.75rem;">{item['status']} ⌄</span></div>
-                <div style="color: #636779; font-size:0.78rem;">🕒 dd/mm/yyyy</div>
+                <div style="color: #636779;">{item['owner']}</div>
+                <div><span style="background:#171822; padding:3px 8px; border-radius:6px; color:#94a3b8; font-size:0.75rem;">{item['priority']}</span></div>
+                <div><span style="background:#171822; padding:3px 8px; border-radius:6px; color:#10b981; font-size:0.75rem;">{item['status']}</span></div>
+                <div style="color: #636779; font-size:0.78rem;">🕒 {item['due']}</div>
             </div>
         """, unsafe_allow_html=True)
 
@@ -579,7 +657,7 @@ elif current_nav == "Search":
         <p style='color: #717684; font-size: 0.95rem; margin-top: 0.25rem;'>Semantic search across all meeting transcripts.</p>
     """, unsafe_allow_html=True)
     
-    st.markdown("<div style='height: 40px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
     _, search_box, _ = st.columns([1, 2.5, 1])
     with search_box:
         q = st.text_input("Search", placeholder="Search meetings, transcripts, decisions...", label_visibility="collapsed")
