@@ -30,8 +30,13 @@ class MeetingReport(BaseModel):
     key_decisions: List[str] = Field(description="Decisions agreed upon in the meeting")
     action_items: List[ActionItem] = Field(description="List of extracted actionable items")
 
-# Supported Gemini endpoints
-MODELS = ["gemini-2.5-flash", "gemini-2.5-pro"]
+# Active current-generation models recommended by the Gemini API
+MODELS = [
+    "gemini-3.1-pro-preview",
+    "gemini-3.6-flash",
+    "gemini-3.5-flash",
+    "gemini-3-flash-preview"
+]
 
 def analyze_transcript(transcript_text: str) -> MeetingReport:
     """Extracts summary and action items using standard prompt-driven JSON extraction."""
